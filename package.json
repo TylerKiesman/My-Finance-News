@@ -2,7 +2,7 @@
   "name": "my-finance-news",
   "version": "1.0.0",
   "description": "A personal webapp that'll be used for looking up stock information and help with analysis.",
-  "main": "index.js",
+  "main": "backendServer.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
