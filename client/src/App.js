@@ -20,6 +20,13 @@ const useStyles = makeStyles((theme) => ({
   title: {
     flexGrow: 1,
   },
+  appbar: {
+    background: '#919ab1'
+  },
+  input: {
+    align: 'center',
+    width: '50%'
+  }
 }));
 
 function TopBar() {
@@ -27,22 +34,18 @@ function TopBar() {
 
   return (
     <div className={classes.root}>
-      <AppBar position="static">
-        <Toolbar>
+      <AppBar position="static" className={classes.appbar}>
+        <Toolbar >
           <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
             <HomeIcon />
           </IconButton>
           <form className={classes.root} noValidate autoComplete="off">
           <TextField
+            className={classes.input}
+            color="secondary"
             id="outlined-full-width"
-            label="Label"
-            style={{ margin: 8 }}
-            placeholder="Ticker"
-            fullWidth
+            placeholder="Search"
             margin="normal"
-            InputLabelProps={{
-              shrink: true,
-            }}
             variant="outlined"
           />
         </form>
