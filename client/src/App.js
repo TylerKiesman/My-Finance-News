@@ -1,14 +1,29 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, withStyles, createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import HomeIcon from '@material-ui/icons/Home';
+
+const searchTheme = createMuiTheme({
+  palette: {
+    primary: {
+      light: '#9ca2b2',
+      main: '#919ab1',
+      dark: '#4e5066',
+      contrastText: '#fff',
+    },
+    secondary: {
+      light: '#bd92aa',
+      main: '#92637c',
+      dark: '#5d3348',
+      contrastText: '#000',
+    },
+  },
+});
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -25,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
   },
   input: {
     align: 'center',
-    width: '50%'
+    width: '50%',
   }
 }));
 
@@ -40,7 +55,8 @@ function TopBar() {
             <HomeIcon />
           </IconButton>
           <form className={classes.root} noValidate autoComplete="off">
-          <TextField
+            <ThemeProvider theme={searchTheme}>
+            <TextField
             className={classes.input}
             color="secondary"
             id="outlined-full-width"
@@ -48,6 +64,7 @@ function TopBar() {
             margin="normal"
             variant="outlined"
           />
+            </ThemeProvider>
         </form>
         </Toolbar>
       </AppBar>
