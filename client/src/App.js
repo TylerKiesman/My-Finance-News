@@ -41,6 +41,9 @@ const useStyles = makeStyles((theme) => ({
   input: {
     align: 'center',
     width: '50%',
+  },
+  whiteBackground: {
+    backgroundColor: theme.palette.common.white,
   }
 }));
 
@@ -63,6 +66,9 @@ function TopBar() {
             placeholder="Search"
             margin="normal"
             variant="outlined"
+            InputProps={{
+              className: classes.whiteBackground
+            }}
           />
             </ThemeProvider>
         </form>
