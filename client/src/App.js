@@ -6,6 +6,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import HomeIcon from '@material-ui/icons/Home';
+import Autocomplete, {createFilterOptions} from '@material-ui/lab/Autocomplete';
 
 const searchTheme = createMuiTheme({
   palette: {
@@ -50,6 +51,10 @@ const useStyles = makeStyles((theme) => ({
 function TopBar() {
   const classes = useStyles();
 
+  const filterOptions = createFilterOptions({
+    limit: 3
+  });
+
   return (
     <div className={classes.root}>
       <AppBar position="static" className={classes.appbar}>
@@ -59,17 +64,29 @@ function TopBar() {
           </IconButton>
           <form className={classes.root} noValidate autoComplete="off">
             <ThemeProvider theme={searchTheme}>
-            <TextField
-            className={classes.input}
-            color="secondary"
-            id="outlined-full-width"
-            placeholder="Search"
-            margin="normal"
-            variant="outlined"
-            InputProps={{
-              className: classes.whiteBackground
-            }}
-          />
+            <Autocomplete
+              disableClearable
+              freeSolo
+              filterOptions={filterOptions}
+              autoHighlight={true}
+              options={["one", "two", "three", "four", "five"]}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  className={classes.input}
+                  color="secondary"
+                  id="outlined-full-width"
+                  placeholder="Search"
+                  margin="normal"
+                  variant="outlined"
+                  InputProps={{
+                    ...params.InputProps, 
+                    type: 'search',
+                    className: classes.whiteBackground
+                  }}
+                />
+              )}
+            />
             </ThemeProvider>
         </form>
         </Toolbar>
