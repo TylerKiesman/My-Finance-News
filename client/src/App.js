@@ -48,8 +48,13 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function TopBar() {
+function TopBar(props) {
   const classes = useStyles();
+  var i = 0;
+  var searchList = [];
+  for(var symbol in props.equitiesList){
+    searchList.push(symbol + "\t" + props.equitiesList[symbol]);
+  }
 
   const filterOptions = createFilterOptions({
     limit: 3
@@ -69,7 +74,7 @@ function TopBar() {
               freeSolo
               filterOptions={filterOptions}
               autoHighlight={true}
-              options={["one", "two", "three", "four", "five"]}
+              options={searchList}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -95,10 +100,10 @@ function TopBar() {
   )
 }
 
-function App() {
+function App(props) {
   return (
     <div className="App">
-      <TopBar />
+      <TopBar equitiesList={props.equitiesList}/>
     </div>
   );
 }
