@@ -19,20 +19,20 @@ app.listen(port, function(err) {
    }
 });
 
-// var c = new Client(); //init ftp client
-// var connectionProperties = { 
-//     host: "ftp.nasdaqtrader.com",
-// };
+var c = new Client(); //init ftp client
+var connectionProperties = { 
+    host: "ftp.nasdaqtrader.com",
+};
 
-// c.on('ready', function() {
-//   c.get('SymbolDirectory/nasdaqtraded.txt', function(err, stream) {
-//     if (err) throw err;
-//     stream.once('close', function() { c.end(); });
-//     stream.pipe(fs.createWriteStream('stocks.txt'));
-//   });
-// });
-// // connect to localhost:21 as anonymous
-// c.connect(connectionProperties);
+c.on('ready', function() {
+  c.get('SymbolDirectory/nasdaqtraded.txt', function(err, stream) {
+    if (err) throw err;
+    stream.once('close', function() { c.end(); });
+    stream.pipe(fs.createWriteStream('stocks.txt'));
+  });
+});
+// connect to localhost:21 as anonymous
+c.connect(connectionProperties);
 
 
 /* GET home page. */
