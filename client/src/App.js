@@ -7,6 +7,7 @@ import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import HomeIcon from '@material-ui/icons/Home';
 import Autocomplete, {createFilterOptions} from '@material-ui/lab/Autocomplete';
+import matchSorter from 'match-sorter';
 
 const searchTheme = createMuiTheme({
   palette: {
@@ -53,11 +54,15 @@ function TopBar(props) {
   var i = 0;
   var searchList = [];
   for(var symbol in props.equitiesList){
-    searchList.push(symbol + "\t" + props.equitiesList[symbol]);
+    if(!symbol.includes('$')){
+      searchList.push(symbol + "\t" + props.equitiesList[symbol]);
+    }
+  }
+  const filterEquities = (options, { inputValue }) => {
+    return matchSorter(options, inputValue);
   }
 
   const filterOptions = createFilterOptions({
-    limit: 3
   });
 
   return (
@@ -71,8 +76,7 @@ function TopBar(props) {
             <ThemeProvider theme={searchTheme}>
             <Autocomplete
               disableClearable
-              freeSolo
-              filterOptions={filterOptions}
+              filterOptions={filterEquities}
               autoHighlight={true}
               options={searchList}
               renderInput={(params) => (
