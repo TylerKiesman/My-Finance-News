@@ -54,16 +54,11 @@ function TopBar(props) {
   var i = 0;
   var searchList = [];
   for(var symbol in props.equitiesList){
-    if(!symbol.includes('$')){
-      searchList.push(symbol + "\t" + props.equitiesList[symbol]);
-    }
+    searchList.push(symbol + "\t" + props.equitiesList[symbol]);
   }
   const filterEquities = (options, { inputValue }) => {
-    return matchSorter(options, inputValue);
+    return matchSorter(options, inputValue).slice(0, 4);
   }
-
-  const filterOptions = createFilterOptions({
-  });
 
   return (
     <div className={classes.root}>

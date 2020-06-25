@@ -21,8 +21,14 @@ http.get('http://localhost:8080', (resp) => {
     const splitString = data.split(/\r?\n/);
     var i = 0;
     for(i = 0; i < splitString.length; i++){
-      var info = splitString[i].split(/\|/).slice(1,3);
-      equities[info[0]] = info[1];
+      const fields = splitString[i].split(/\|/);
+      const symbol = fields[1];
+      const name = fields[2];
+      if(name && symbol){
+        if(fields[7] != 'Y' && !symbol.includes('$') && !name.includes('Warrant')){
+          equities[symbol] = name;
+        }
+      }
     }
     ReactDOM.render(
       <React.StrictMode>
