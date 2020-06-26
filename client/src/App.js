@@ -49,14 +49,30 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+function getRandom(arr, n) {
+  var result = new Array(n),
+      len = arr.length,
+      taken = new Array(len);
+  if (n > len)
+      throw new RangeError("getRandom: more elements taken than available");
+  while (n--) {
+      var x = Math.floor(Math.random() * len);
+      result[n] = arr[x in taken ? taken[x] : x];
+      taken[x] = --len in taken ? taken[len] : len;
+  }
+  return result;
+}
+
 function TopBar(props) {
   const classes = useStyles();
-  var i = 0;
   var searchList = [];
   for(var symbol in props.equitiesList){
-    searchList.push(symbol + "\t" + props.equitiesList[symbol]);
+    searchList.push(symbol + " " + props.equitiesList[symbol]);
   }
   const filterEquities = (options, { inputValue }) => {
+    if(inputValue == ""){
+      return getRandom(options, 4);
+    }
     return matchSorter(options, inputValue).slice(0, 4);
   }
 
@@ -74,6 +90,15 @@ function TopBar(props) {
               filterOptions={filterEquities}
               autoHighlight={true}
               options={searchList}
+              renderOption={(option, { inputValue }) => {
+                var symbolAndName = option.split(/ (.+)/);
+        
+                return (
+                  <div>
+                    <b>{symbolAndName[0]}</b><span> {symbolAndName[1]}</span>
+                  </div>
+                );
+              }}
               renderInput={(params) => (
                 <TextField
                   {...params}

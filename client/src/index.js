@@ -21,12 +21,17 @@ http.get('http://localhost:8080', (resp) => {
     const splitString = data.split(/\r?\n/);
     var i = 0;
     for(i = 0; i < splitString.length; i++){
+      if(i == 0){
+        continue;
+      }
       const fields = splitString[i].split(/\|/);
       const symbol = fields[1];
       const name = fields[2];
       if(name && symbol){
-        if(fields[7] != 'Y' && !symbol.includes('$') && !name.includes('Warrant')){
-          equities[symbol] = name;
+        if(fields[7] != 'Y' && !symbol.includes('$') && !name.toLowerCase().includes('- warrant') && !name.toLowerCase().includes('- unit')
+         && !name.toLowerCase().includes('- right') && !name.toLowerCase().includes('preferred') && !name.toLowerCase().includes('series') 
+         && !name.toLowerCase().includes('%')){
+          equities[symbol] = name.replace(/ - .*/, "");
         }
       }
     }
