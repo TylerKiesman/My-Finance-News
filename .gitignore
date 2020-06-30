@@ -105,3 +105,6 @@ dist
 
 # Stocks file
 stocks.txt
+
+#Env file
+.env
