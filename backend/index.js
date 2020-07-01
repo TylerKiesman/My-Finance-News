@@ -1,6 +1,9 @@
 var express = require('express');
 var Client = require('ftp');
 var fs = require('fs');
+const dotenv = require('dotenv');
+const request = require('request');
+dotenv.config();
 
 const app = express()
 const port = 8080
@@ -50,3 +53,16 @@ app.get('/', function(req, res, next) {
   next();
 });
 
+app.get('/getFundamentals/', function(req, res, next) {
+  params = {
+    "apikey": process.env.API_KEY,
+    "symbol": "IBM",
+    "projection": "fundamental"
+  }
+  request({url:"https://api.tdameritrade.com/v1/instruments", qs:params}, function(err, response, body) {
+    if(err) { console.log(err); res.end(); next(); }
+    res.send(body);
+    res.end();
+    next();
+  });
+})
