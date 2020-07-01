@@ -3,6 +3,7 @@ var Client = require('ftp');
 var fs = require('fs');
 const dotenv = require('dotenv');
 const request = require('request');
+const url = require('url');
 dotenv.config();
 
 const app = express()
@@ -53,10 +54,12 @@ app.get('/', function(req, res, next) {
   next();
 });
 
-app.get('/getFundamentals/', function(req, res, next) {
+app.get('/getFundamentals', function(req, res, next) {
+  var url_parts = url.parse(req.url, true);
+  var query = url_parts.query;
   params = {
     "apikey": process.env.API_KEY,
-    "symbol": "IBM",
+    "symbol": query["symbol"],
     "projection": "fundamental"
   }
   request({url:"https://api.tdameritrade.com/v1/instruments", qs:params}, function(err, response, body) {
