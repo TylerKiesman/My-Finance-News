@@ -9,6 +9,8 @@ import HomeIcon from '@material-ui/icons/Home';
 import Autocomplete, {createFilterOptions} from '@material-ui/lab/Autocomplete';
 import matchSorter from 'match-sorter';
 
+var http = require('http');
+
 const searchTheme = createMuiTheme({
   palette: {
     primary: {
@@ -124,10 +126,28 @@ function TopBar(props) {
   )
 }
 
+// $DJI $COMPX $SPX.X $RUT.X
+function HomePage(){
+  const [state, setState] = useState({
+    loaded: false
+  });
+
+  return (<br/>);
+}
+
 function App(props) {
+  const [state, setState] = useState({
+    currentPage: <HomePage/>
+  });
+
+  const changePage = page => {
+    setState({currentPage: page});
+  }
+
   return (
     <div className="App">
       <TopBar equitiesList={props.equitiesList}/>
+      {state.currentPage}
     </div>
   );
 }
