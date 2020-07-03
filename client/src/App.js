@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './App.css';
 import { makeStyles, withStyles, createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -8,6 +8,9 @@ import IconButton from '@material-ui/core/IconButton';
 import HomeIcon from '@material-ui/icons/Home';
 import Autocomplete, {createFilterOptions} from '@material-ui/lab/Autocomplete';
 import matchSorter from 'match-sorter';
+import Loader from 'react-loader-spinner';
+
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 
 var http = require('http');
 
@@ -132,7 +135,14 @@ function HomePage(){
     loaded: false
   });
 
-  return (<br/>);
+  return (<div>
+    <AppBar/>
+    <Loader
+    type="Audio"
+    color="#00BFFF"
+    height={100}
+    width={100}/>
+    </div>);
 }
 
 function App(props) {
