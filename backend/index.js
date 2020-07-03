@@ -28,15 +28,15 @@ var connectionProperties = {
     host: "ftp.nasdaqtrader.com",
 };
 
-c.on('ready', function() {
-  c.get('SymbolDirectory/nasdaqtraded.txt', function(err, stream) {
-    if (err) throw err;
-    stream.once('close', function() { c.end(); });
-    stream.pipe(fs.createWriteStream('stocks.txt'));
-  });
-});
-// connect to localhost:21 as anonymous
-c.connect(connectionProperties);
+// c.on('ready', function() {
+//   c.get('SymbolDirectory/nasdaqtraded.txt', function(err, stream) {
+//     if (err) throw err;
+//     stream.once('close', function() { c.end(); });
+//     stream.pipe(fs.createWriteStream('stocks.txt'));
+//   });
+// });
+// // connect to localhost:21 as anonymous
+// c.connect(connectionProperties);
 
 
 /* GET home page. */
@@ -54,6 +54,7 @@ app.get('/', function(req, res, next) {
   next();
 });
 
+/* GET fundamentals of a stock */
 app.get('/getFundamentals', function(req, res, next) {
   var url_parts = url.parse(req.url, true);
   var query = url_parts.query;
@@ -63,7 +64,26 @@ app.get('/getFundamentals', function(req, res, next) {
     "projection": "fundamental"
   }
   request({url:"https://api.tdameritrade.com/v1/instruments", qs:params}, function(err, response, body) {
-    if(err) { console.log(err); res.end(); next(); }
+    if(err) { console.log(err); res.send(err); res.end(); next(); }
+    res.send(body);
+    res.end();
+    next();
+  });
+})
+
+/* GET the 1 minute data for a stock for today */
+app.get('/getIntraPrice', function(req, res, next) {
+  var url_parts = url.parse(req.url, true);
+  var query = url_parts.query;
+  params = {
+    "apikey": process.env.API_KEY,
+    "startDate": new Date(new Date().getFullYear(),new Date().getMonth() , new Date().getDate()).getTime(),
+    "endDate": Date.now(),
+    "frequencyType": "minute",
+    "frequency": 1
+  }
+  request({url:`https://api.tdameritrade.com/v1/marketdata/${query["symbol"]}/pricehistory`, qs:params}, function(err, response, body) {
+    if(err) { console.log(err); res.send(err); res.end(); next(); }
     res.send(body);
     res.end();
     next();
