@@ -11,21 +11,22 @@ import matchSorter from 'match-sorter';
 import Loader from 'react-loader-spinner';
 
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+import { Z_BLOCK } from 'zlib';
 
 var http = require('http');
 
 const searchTheme = createMuiTheme({
   palette: {
     primary: {
-      light: '#9ca2b2',
-      main: '#919ab1',
-      dark: '#4e5066',
+      light: '#274472',
+      main: '#274472',
+      dark: '#274472',
       contrastText: '#fff',
     },
     secondary: {
-      light: '#bd92aa',
-      main: '#92637c',
-      dark: '#5d3348',
+      light: '#5885af',
+      main: '#5885af',
+      dark: '#5885af',
       contrastText: '#000',
     },
   },
@@ -43,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   appbar: {
-    background: '#919ab1'
+    background: '#274472'
   },
   input: {
     align: 'center',
@@ -113,6 +114,7 @@ function TopBar(props) {
                   placeholder="Search"
                   margin="normal"
                   variant="outlined"
+                  size="small"
                   InputProps={{
                     ...params.InputProps, 
                     type: 'search',
@@ -139,9 +141,10 @@ function HomePage(){
     <AppBar/>
     <Loader
     type="Audio"
-    color="#00BFFF"
+    color="#5885af"
     height={100}
-    width={100}/>
+    width={100}
+    style={{position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)"}}/>
     </div>);
 }
 
