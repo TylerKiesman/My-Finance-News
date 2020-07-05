@@ -9,9 +9,12 @@ import HomeIcon from '@material-ui/icons/Home';
 import Autocomplete, {createFilterOptions} from '@material-ui/lab/Autocomplete';
 import matchSorter from 'match-sorter';
 import Loader from 'react-loader-spinner';
+import createPlotlyComponent from "react-plotly.js/factory";
 
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 import { Z_BLOCK } from 'zlib';
+
+var Plotly = require('plotly.js-basic-dist');
 
 var http = require('http');
 
@@ -153,6 +156,7 @@ class HomePage extends React.Component {
     }
   }
 
+  // Get data for $DJI $COMPX $SPX.X $RUT.X
   componentDidMount() {
     http.get('http://localhost:8080/getLatestPrice?symbol=$DJI', (resp) => {
       let data = '';
@@ -161,7 +165,7 @@ class HomePage extends React.Component {
       });
 
       resp.on('end', () => {
-        this.addSymbol("$DJI", data);
+        this.addSymbol("$DJI", JSON.parse(data));
       });
     });
 
@@ -172,7 +176,7 @@ class HomePage extends React.Component {
       });
 
       resp.on('end', () => {
-        this.addSymbol("$COMPX", data);
+        this.addSymbol("$COMPX", JSON.parse(data));
       });
     });
 
@@ -183,7 +187,7 @@ class HomePage extends React.Component {
       });
 
       resp.on('end', () => {
-        this.addSymbol("$SPX.X", data);
+        this.addSymbol("$SPX.X", JSON.parse(data));
       });
     });
 
@@ -194,14 +198,60 @@ class HomePage extends React.Component {
       });
 
       resp.on('end', () => {
-        this.addSymbol("$RUT.X", data);
+        this.addSymbol("$RUT.X", JSON.parse(data));
       });
     });
   }
 
+  convertEpochToHourMinute(time){
+    const dt = new Date(time);
+    const hr = dt.getHours();
+    const m = "0" + dt.getMinutes();
+    
+    return hr + ':' + m.substr(-2);
+  }
+
+  getPricePoints(candles){
+    var prices = [];
+    for(var i = 0; i < candles.length; i++){
+      prices.push(candles[i].close);
+    }
+    return prices;
+  }
+
+  getTimePoints(candles){
+    var times = [];
+    for(var i = 0; i < candles.length; i++){
+      times.push(this.convertEpochToHourMinute(candles[i].datetime));
+    }
+    return times;
+  }
+
   render() {
+    console.log(this.state)
     if(this.state.indexData){
-      return(<AppBar/>);
+      const Plot = createPlotlyComponent(Plotly);
+      return(<div>
+        <AppBar/>
+        {Object.keys(this.state.indexData).map((symbol) => {
+          const indexObj = this.state.indexData[symbol];
+          console.log(indexObj.candles)
+          return (
+              <Plot
+                data={[
+                  {
+                    x: this.getTimePoints(indexObj.candles),
+                    y: this.getPricePoints(indexObj.candles),
+                    type: 'scatter',
+                    mode: 'lines',
+                    marker: {color: 'red'},
+                  },
+                ]}
+                layout={ {width: 500, height: 300, title: symbol} }
+              />
+            );
+          })}
+      </div>);
     }
     return (<div>
       <AppBar/>
@@ -214,50 +264,6 @@ class HomePage extends React.Component {
       </div>);
   }
 }
-
-// $DJI $COMPX $SPX.X $RUT.X
-// function HomePage(){
-//   const [state, setState] = useState({
-//     loaded: false,
-//     initiated: false,
-//   });
-//   const symbols = ["$DJI", "$COMPX", "$SPX.X", "$RUT.X"];
-
-//   const addSymbol = (symbol, symData) => {
-//     state.initiated = true
-//     if(!symbols.includes(symbol)){
-//       return;
-//     } else {
-//       // If this is the last symbol loaded in say we're loaded.
-//       state[symbol] = symData;
-//       for(var i = 0; i < symbols.length; i++){
-//         var indexSym = symbols[i];
-//         if(!(indexSym in state)){
-//           return;
-//         }
-//       }
-//       setState({...state, loaded: true});
-//     }
-//   }
-//   if(!state.loaded){
-//     if(!state.initiated){
-      
-//     }
-
-//     return (<div>
-//       <AppBar/>
-//       <Loader
-//       type="Audio"
-//       color="#5885af"
-//       height={100}
-//       width={100}
-//       style={{position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)"}}/>
-//       </div>);
-//   } else {
-//     console.log("done");
-//     return (<AppBar/>)
-//   }
-// }
 
 function App(props) {
   const [state, setState] = useState({

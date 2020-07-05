@@ -76,12 +76,24 @@ app.get('/getFundamentals', function(req, res, next) {
 app.get('/getLatestPrice', function(req, res, next) {
   var url_parts = url.parse(req.url, true);
   var query = url_parts.query;
-  params = {
-    "apikey": process.env.API_KEY,
-    "startDate": new Date(new Date().getFullYear(),new Date().getMonth() , new Date().getDate()).getTime(),
-    "endDate": Date.now(),
-    "frequencyType": "minute",
-    "frequency": 1
+  var afterHours = query.afterHours;
+  if(!afterHours){
+    params = {
+      "apikey": process.env.API_KEY,
+      "startDate": new Date(new Date().getFullYear(),new Date().getMonth() , new Date().getDate()).getTime(),
+      "endDate": Date.now(),
+      "frequencyType": "minute",
+      "frequency": 1
+    }
+  } else {
+    params = {
+      "apikey": process.env.API_KEY,
+      "startDate": new Date(new Date().getFullYear(),new Date().getMonth() , new Date().getDate()).getTime(),
+      "endDate": Date.now(),
+      "frequencyType": "minute",
+      "frequency": 1,
+      "needExtendedHoursData": true
+    }
   }
   checkDateParams = {
     "apikey": process.env.API_KEY,
@@ -90,12 +102,23 @@ app.get('/getLatestPrice', function(req, res, next) {
   request({url: 'https://api.tdameritrade.com/v1/marketdata/EQUITY/hours', qs:checkDateParams}, function(hError, hResponse, hBody){
     if(hError) { console.log(hError); res.send(hError); res.end(); next(); }
     if(!res.isOpen){
-      params = {
-        "apikey": process.env.API_KEY,
-        "periodType": "day",
-        "period": 1,
-        "frequencyType": "minute",
-        "frequency": 1
+      if(!afterHours){
+        params = {
+          "apikey": process.env.API_KEY,
+          "periodType": "day",
+          "period": 1,
+          "frequencyType": "minute",
+          "frequency": 1
+        }
+      } else {
+        params = {
+          "apikey": process.env.API_KEY,
+          "periodType": "day",
+          "period": 1,
+          "frequencyType": "minute",
+          "frequency": 1,
+          "needExtendedHoursData": true
+        }
       }
     }
     request({url:`https://api.tdameritrade.com/v1/marketdata/${query["symbol"]}/pricehistory`, qs:params}, function(err, response, body) {
