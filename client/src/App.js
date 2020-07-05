@@ -131,33 +131,133 @@ function TopBar(props) {
   )
 }
 
-// $DJI $COMPX $SPX.X $RUT.X
-function HomePage(){
-  const [state, setState] = useState({
-    loaded: false
-  });
+class HomePage extends React.Component { 
+  constructor(props){
+    super(props);
+    this.state = {};
+    this.symbols = {"$DJI": null, "$COMPX": null, "$SPX.X": null, "$RUT.X": null};
+  }
 
-  let data = '';
-  http.get('http://localhost:8080/getLatestPrice?symbol=$DJI', (resp) => {
-    resp.on('data', (chunk) => {
-      data += chunk;
+  addSymbol(symbol, symData){
+    if(!(symbol in this.symbols)){
+      return;
+    } else {
+      // If this is the last symbol loaded in say we're loaded.
+      this.symbols[symbol] = symData;
+      for(const index in this.symbols){
+        if(!this.symbols[index]){
+          return;
+        }
+      }
+      this.setState({...this.state, indexData: this.symbols});
+    }
+  }
+
+  componentDidMount() {
+    http.get('http://localhost:8080/getLatestPrice?symbol=$DJI', (resp) => {
+      let data = '';
+      resp.on('data', (chunk) => {
+        data += chunk;
+      });
+
+      resp.on('end', () => {
+        this.addSymbol("$DJI", data);
+      });
     });
 
-    resp.on('end', () => {
-      console.log(data);
-    });
-  })
+    http.get('http://localhost:8080/getLatestPrice?symbol=$COMPX', (resp) => {
+      let data = '';
+      resp.on('data', (chunk) => {
+        data += chunk;
+      });
 
-  return (<div>
-    <AppBar/>
-    <Loader
-    type="Audio"
-    color="#5885af"
-    height={100}
-    width={100}
-    style={{position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)"}}/>
-    </div>);
+      resp.on('end', () => {
+        this.addSymbol("$COMPX", data);
+      });
+    });
+
+    http.get('http://localhost:8080/getLatestPrice?symbol=$SPX.X', (resp) => {
+      let data = '';
+      resp.on('data', (chunk) => {
+        data += chunk;
+      });
+
+      resp.on('end', () => {
+        this.addSymbol("$SPX.X", data);
+      });
+    });
+
+    http.get('http://localhost:8080/getLatestPrice?symbol=$RUT.X', (resp) => {
+      let data = '';
+      resp.on('data', (chunk) => {
+        data += chunk;
+      });
+
+      resp.on('end', () => {
+        this.addSymbol("$RUT.X", data);
+      });
+    });
+  }
+
+  render() {
+    if(this.state.indexData){
+      return(<AppBar/>);
+    }
+    return (<div>
+      <AppBar/>
+      <Loader
+      type="Audio"
+      color="#5885af"
+      height={100}
+      width={100}
+      style={{position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)"}}/>
+      </div>);
+  }
 }
+
+// $DJI $COMPX $SPX.X $RUT.X
+// function HomePage(){
+//   const [state, setState] = useState({
+//     loaded: false,
+//     initiated: false,
+//   });
+//   const symbols = ["$DJI", "$COMPX", "$SPX.X", "$RUT.X"];
+
+//   const addSymbol = (symbol, symData) => {
+//     state.initiated = true
+//     if(!symbols.includes(symbol)){
+//       return;
+//     } else {
+//       // If this is the last symbol loaded in say we're loaded.
+//       state[symbol] = symData;
+//       for(var i = 0; i < symbols.length; i++){
+//         var indexSym = symbols[i];
+//         if(!(indexSym in state)){
+//           return;
+//         }
+//       }
+//       setState({...state, loaded: true});
+//     }
+//   }
+//   if(!state.loaded){
+//     if(!state.initiated){
+      
+//     }
+
+//     return (<div>
+//       <AppBar/>
+//       <Loader
+//       type="Audio"
+//       color="#5885af"
+//       height={100}
+//       width={100}
+//       style={{position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)"}}/>
+//       </div>);
+//   } else {
+//     console.log("done");
+//     return (<AppBar/>)
+//   }
+// }
 
 function App(props) {
   const [state, setState] = useState({

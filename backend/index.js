@@ -33,6 +33,7 @@ c.on('ready', function() {
     if (err) throw err;
     stream.once('close', function() { c.end(); });
     stream.pipe(fs.createWriteStream('stocks.txt'));
+    console.log("Successfully recieved NASDAQ file.");
   });
 });
 // connect to localhost:21 as anonymous
