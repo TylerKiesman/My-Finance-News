@@ -72,7 +72,7 @@ app.get('/getFundamentals', function(req, res, next) {
 })
 
 /* GET the 1 minute data for a stock for today */
-app.get('/getIntraPrice', function(req, res, next) {
+app.get('/getLatestPrice', function(req, res, next) {
   var url_parts = url.parse(req.url, true);
   var query = url_parts.query;
   params = {
@@ -82,10 +82,26 @@ app.get('/getIntraPrice', function(req, res, next) {
     "frequencyType": "minute",
     "frequency": 1
   }
-  request({url:`https://api.tdameritrade.com/v1/marketdata/${query["symbol"]}/pricehistory`, qs:params}, function(err, response, body) {
-    if(err) { console.log(err); res.send(err); res.end(); next(); }
-    res.send(body);
-    res.end();
-    next();
-  });
+  checkDateParams = {
+    "apikey": process.env.API_KEY,
+    "date": new Date().getFullYear + "-" + new Date().getMonth() + "-" + new Date().getDay()
+  }
+  request({url: 'https://api.tdameritrade.com/v1/marketdata/EQUITY/hours', qs:checkDateParams}, function(hError, hResponse, hBody){
+    if(hError) { console.log(hError); res.send(hError); res.end(); next(); }
+    if(!res.isOpen){
+      params = {
+        "apikey": process.env.API_KEY,
+        "periodType": "day",
+        "period": 1,
+        "frequencyType": "minute",
+        "frequency": 1
+      }
+    }
+    request({url:`https://api.tdameritrade.com/v1/marketdata/${query["symbol"]}/pricehistory`, qs:params}, function(err, response, body) {
+      if(err) { console.log(err); res.send(err); res.end(); next(); }
+      res.send(body);
+      res.end();
+      next();
+    });
+  })
 })

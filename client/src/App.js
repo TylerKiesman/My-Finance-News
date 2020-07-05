@@ -137,6 +137,17 @@ function HomePage(){
     loaded: false
   });
 
+  let data = '';
+  http.get('http://localhost:8080/getLatestPrice?symbol=$DJI', (resp) => {
+    resp.on('data', (chunk) => {
+      data += chunk;
+    });
+
+    resp.on('end', () => {
+      console.log(data);
+    });
+  })
+
   return (<div>
     <AppBar/>
     <Loader
