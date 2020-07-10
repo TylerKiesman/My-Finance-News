@@ -97,11 +97,12 @@ app.get('/getLatestPrice', function(req, res, next) {
   }
   checkDateParams = {
     "apikey": process.env.API_KEY,
-    "date": new Date().getFullYear + "-" + new Date().getMonth() + "-" + new Date().getDay()
+    "date": new Date(new Date().getFullYear(),new Date().getMonth() , new Date().getDate())
   }
   request({url: 'https://api.tdameritrade.com/v1/marketdata/EQUITY/hours', qs:checkDateParams}, function(hError, hResponse, hBody){
+    let responseJson = JSON.parse(hBody);
     if(hError) { console.log(hError); res.send(hError); res.end(); next(); }
-    if(!res.isOpen){
+    if(!responseJson.equity["EQ"].isOpen){
       if(!afterHours){
         params = {
           "apikey": process.env.API_KEY,
