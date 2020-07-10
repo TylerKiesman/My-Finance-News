@@ -227,29 +227,59 @@ class HomePage extends React.Component {
     return times;
   }
 
+  getOpeningPeriodPrice(candles){
+    return candles[0].open;
+  }
+
+  generateLineDiagram(candles, symbol){
+    const Plot = createPlotlyComponent(Plotly);
+    const lineColor = 'green';
+    const timePoints = this.getTimePoints(candles);
+    const pricePoints = this.getPricePoints(candles);
+    const openPrice = this.getOpeningPeriodPrice(candles);
+    const closeTime = timePoints[timePoints.length - 1];
+    const openTime = timePoints[0];
+    const layout = {showlegend: false};
+    return (
+      <Plot
+        data={[
+          {
+            x: timePoints,
+            y: pricePoints,
+            type: 'scatter',
+            mode: 'lines',
+            marker: {color: lineColor},
+          },
+          {
+            type: 'scatter',
+            x: [timePoints[timePoints.length - 1]], 
+            y: [pricePoints[pricePoints.length - 1]], 
+            mode: "markers", 
+            marker: {color: lineColor, size: 5}
+          },
+          {
+            type: 'scatter',
+            x: [openTime, closeTime], 
+            y: [openPrice, openPrice], 
+            mode: "lines", 
+            marker: {color: 'black', width: 10},
+            line: {width: 1}
+          },
+        ]}
+        layout={ {width: 500, height: 300, title: symbol, showlegend: false} }
+      />
+    );
+  }
+
   render() {
     console.log(this.state)
     if(this.state.indexData){
-      const Plot = createPlotlyComponent(Plotly);
       return(<div>
         <AppBar/>
         {Object.keys(this.state.indexData).map((symbol) => {
           const indexObj = this.state.indexData[symbol];
-          console.log(indexObj.candles)
-          return (
-              <Plot
-                data={[
-                  {
-                    x: this.getTimePoints(indexObj.candles),
-                    y: this.getPricePoints(indexObj.candles),
-                    type: 'scatter',
-                    mode: 'lines',
-                    marker: {color: 'red'},
-                  },
-                ]}
-                layout={ {width: 500, height: 300, title: symbol} }
-              />
-            );
+          console.log(indexObj)
+          return this.generateLineDiagram(indexObj.candles, symbol)
           })}
       </div>);
     }
