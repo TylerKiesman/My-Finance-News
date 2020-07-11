@@ -208,7 +208,8 @@ class HomePage extends React.Component {
     const hr = dt.getHours();
     const m = "0" + dt.getMinutes();
     
-    return hr + ':' + m.substr(-2);
+    //return hr + ':' + m.substr(-2);
+    return dt;
   }
 
   getPricePoints(candles){
@@ -232,6 +233,7 @@ class HomePage extends React.Component {
   }
 
   generateLineDiagram(candles, symbol){
+    console.log(candles)
     const Plot = createPlotlyComponent(Plotly);
     const lineColor = 'green';
     const timePoints = this.getTimePoints(candles);
@@ -274,10 +276,13 @@ class HomePage extends React.Component {
           title: symbol, 
           showlegend: false,
           xaxis: {
-            showgrid: false
+            type: 'date',
+            tick0: openTime,
+            showgrid: false,
+            tickformat: '%-I%p'
           },
           yaxis: {
-            showgrid: false
+            showgrid: false,
           }
         } }
         config={{staticPlot: true}}
