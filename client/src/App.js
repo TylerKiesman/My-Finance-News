@@ -237,9 +237,12 @@ class HomePage extends React.Component {
     const timePoints = this.getTimePoints(candles);
     const pricePoints = this.getPricePoints(candles);
     const openPrice = this.getOpeningPeriodPrice(candles);
+    const closePrice = candles[candles.length - 1].close;
     const closeTime = timePoints[timePoints.length - 1];
     const openTime = timePoints[0];
-    const layout = {showlegend: false};
+    if(closePrice < openPrice){
+      lineColor = 'red';
+    }
     return (
       <Plot
         data={[
@@ -266,19 +269,28 @@ class HomePage extends React.Component {
             line: {width: 1}
           },
         ]}
-        layout={ {width: 500, height: 300, title: symbol, showlegend: false} }
+        layout={ {width: 500,
+          height: 300, 
+          title: symbol, 
+          showlegend: false,
+          xaxis: {
+            showgrid: false
+          },
+          yaxis: {
+            showgrid: false
+          }
+        } }
+        config={{staticPlot: true}}
       />
     );
   }
 
   render() {
-    console.log(this.state)
     if(this.state.indexData){
       return(<div>
         <AppBar/>
         {Object.keys(this.state.indexData).map((symbol) => {
           const indexObj = this.state.indexData[symbol];
-          console.log(indexObj)
           return this.generateLineDiagram(indexObj.candles, symbol)
           })}
       </div>);

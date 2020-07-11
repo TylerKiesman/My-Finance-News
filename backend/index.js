@@ -102,23 +102,47 @@ app.get('/getLatestPrice', function(req, res, next) {
   request({url: 'https://api.tdameritrade.com/v1/marketdata/EQUITY/hours', qs:checkDateParams}, function(hError, hResponse, hBody){
     let responseJson = JSON.parse(hBody);
     if(hError) { console.log(hError); res.send(hError); res.end(); next(); }
-    if(!responseJson.equity["EQ"].isOpen){
-      if(!afterHours){
-        params = {
-          "apikey": process.env.API_KEY,
-          "periodType": "day",
-          "period": 1,
-          "frequencyType": "minute",
-          "frequency": 1
+    if(responseJson.equity.equity){
+      if(!responseJson.equity.equity.isOpen){
+        if(!afterHours){
+          params = {
+            "apikey": process.env.API_KEY,
+            "periodType": "day",
+            "period": 1,
+            "frequencyType": "minute",
+            "frequency": 1
+          }
+        } else {
+          params = {
+            "apikey": process.env.API_KEY,
+            "periodType": "day",
+            "period": 1,
+            "frequencyType": "minute",
+            "frequency": 1,
+            "needExtendedHoursData": true
+          }
         }
-      } else {
-        params = {
-          "apikey": process.env.API_KEY,
-          "periodType": "day",
-          "period": 1,
-          "frequencyType": "minute",
-          "frequency": 1,
-          "needExtendedHoursData": true
+      }
+    }
+    else if(responseJson.equity["EQ"]){
+      if(!responseJson.equity["EQ"].isOpen){
+        if(!afterHours){
+          params = {
+            "apikey": process.env.API_KEY,
+            "periodType": "day",
+            "period": 1,
+            "frequencyType": "minute",
+            "frequency": 1
+          }
+        } else {
+          params = {
+            "apikey": process.env.API_KEY,
+            "periodType": "day",
+            "period": 1,
+            "frequencyType": "minute",
+            "frequency": 1,
+            "needExtendedHoursData": true
+          }
         }
       }
     }
