@@ -12,7 +12,6 @@ import Loader from 'react-loader-spinner';
 import createPlotlyComponent from "react-plotly.js/factory";
 
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
-import { Z_BLOCK } from 'zlib';
 
 var Plotly = require('plotly.js-basic-dist');
 
@@ -58,6 +57,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+// Get random values from an array
 function getRandom(arr, n) {
   var result = new Array(n),
       len = arr.length,

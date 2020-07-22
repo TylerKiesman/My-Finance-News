@@ -28,6 +28,7 @@ var connectionProperties = {
     host: "ftp.nasdaqtrader.com",
 };
 
+// Get the most up to date list of the stocks being traded on the Nasdaq
 c.on('ready', function() {
   c.get('SymbolDirectory/nasdaqtraded.txt', function(err, stream) {
     if (err) throw err;
