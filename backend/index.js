@@ -40,6 +40,31 @@ c.on('ready', function() {
 // connect to localhost:21 as anonymous
 c.connect(connectionProperties);
 
+function getPreviousDayClose(marketOpen, symbol){
+  var params = {};
+  if(marketOpen){
+    params = {
+      "apikey": process.env.API_KEY,
+      "periodType": "day",
+      "period": 1,
+      "frequencyType": "minute",
+      "frequency": 1
+    }
+  } else {
+    params = {
+      "apikey": process.env.API_KEY,
+      "periodType": "day",
+      "period": 2,
+      "frequencyType": "minute",
+      "frequency": 1
+    }
+  }
+  request({url:`https://api.tdameritrade.com/v1/marketdata/${symbol}/pricehistory`, qs:params}, function(err, response, body) {
+      if(err) { console.log(err); res.send(err); res.end(); next(); }
+      console.log(body);
+    });
+}
+
 
 /* GET home page. */
 app.get('/', function(req, res, next) {
@@ -102,9 +127,11 @@ app.get('/getLatestPrice', function(req, res, next) {
   }
   request({url: 'https://api.tdameritrade.com/v1/marketdata/EQUITY/hours', qs:checkDateParams}, function(hError, hResponse, hBody){
     let responseJson = JSON.parse(hBody);
+    var marketOpen = false;
     if(hError) { console.log(hError); res.send(hError); res.end(); next(); }
     if(responseJson.equity.equity){
-      if(!responseJson.equity.equity.isOpen){
+      marketOpen = responseJson.equity.equity.isOpen;
+      if(!marketOpen){
         if(!afterHours){
           params = {
             "apikey": process.env.API_KEY,
@@ -126,7 +153,8 @@ app.get('/getLatestPrice', function(req, res, next) {
       }
     }
     else if(responseJson.equity["EQ"]){
-      if(!responseJson.equity["EQ"].isOpen){
+      marketOpen = responseJson.equity["EQ"].isOpen;
+      if(!marketOpen){
         if(!afterHours){
           params = {
             "apikey": process.env.API_KEY,
@@ -147,6 +175,7 @@ app.get('/getLatestPrice', function(req, res, next) {
         }
       }
     }
+    var lastClose = getPreviousDayClose(marketOpen, query["symbol"]);
     request({url:`https://api.tdameritrade.com/v1/marketdata/${query["symbol"]}/pricehistory`, qs:params}, function(err, response, body) {
       if(err) { console.log(err); res.send(err); res.end(); next(); }
       res.send(body);

@@ -235,7 +235,7 @@ class HomePage extends React.Component {
   generateLineDiagram(candles, symbol){
     console.log(candles)
     const Plot = createPlotlyComponent(Plotly);
-    const lineColor = 'green';
+    var lineColor = 'green';
     const timePoints = this.getTimePoints(candles);
     const pricePoints = this.getPricePoints(candles);
     const openPrice = this.getOpeningPeriodPrice(candles);
@@ -285,7 +285,7 @@ class HomePage extends React.Component {
             showgrid: false,
           }
         } }
-        config={{staticPlot: true}}
+        // config={{staticPlot: true}}
       />
     );
   }
