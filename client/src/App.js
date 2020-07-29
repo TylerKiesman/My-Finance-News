@@ -233,7 +233,6 @@ class HomePage extends React.Component {
   }
 
   generateLineDiagram(candles, symbol){
-    console.log(candles)
     const Plot = createPlotlyComponent(Plotly);
     var lineColor = 'green';
     const timePoints = this.getTimePoints(candles);
@@ -296,7 +295,8 @@ class HomePage extends React.Component {
         <AppBar/>
         {Object.keys(this.state.indexData).map((symbol) => {
           const indexObj = this.state.indexData[symbol];
-          return this.generateLineDiagram(indexObj.candles, symbol)
+          console.log(indexObj)
+          return this.generateLineDiagram(JSON.parse(indexObj.today).candles, symbol)
           })}
       </div>);
     }

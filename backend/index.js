@@ -2,7 +2,7 @@ var express = require('express');
 var Client = require('ftp');
 var fs = require('fs');
 const dotenv = require('dotenv');
-const request = require('request');
+const request = require('request-promise');
 const url = require('url');
 dotenv.config();
 
@@ -40,7 +40,7 @@ c.on('ready', function() {
 // connect to localhost:21 as anonymous
 c.connect(connectionProperties);
 
-function getPreviousDayClose(marketOpen, symbol){
+async function getPreviousDayClose(marketOpen, symbol){
   var params = {};
   if(marketOpen){
     params = {
@@ -59,10 +59,11 @@ function getPreviousDayClose(marketOpen, symbol){
       "frequency": 1
     }
   }
-  request({url:`https://api.tdameritrade.com/v1/marketdata/${symbol}/pricehistory`, qs:params}, function(err, response, body) {
-      if(err) { console.log(err); res.send(err); res.end(); next(); }
-      console.log(body);
-    });
+  try{
+    var result = await request({url:`https://api.tdameritrade.com/v1/marketdata/${symbol}/pricehistory`, qs:params, json: true})
+    var candles = result.candles;
+    return candles[candles.length - 1];
+  } catch(err) {console.log(err)}
 }
 
 
@@ -176,9 +177,13 @@ app.get('/getLatestPrice', function(req, res, next) {
       }
     }
     var lastClose = getPreviousDayClose(marketOpen, query["symbol"]);
+    console.log(lastClose)
     request({url:`https://api.tdameritrade.com/v1/marketdata/${query["symbol"]}/pricehistory`, qs:params}, function(err, response, body) {
       if(err) { console.log(err); res.send(err); res.end(); next(); }
-      res.send(body);
+      res.send({
+        start: lastClose,
+        today: body
+      });
       res.end();
       next();
     });
