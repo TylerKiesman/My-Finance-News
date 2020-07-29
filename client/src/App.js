@@ -232,12 +232,11 @@ class HomePage extends React.Component {
     return candles[0].open;
   }
 
-  generateLineDiagram(candles, symbol){
+  generateLineDiagram(candles, symbol, openPrice){
     const Plot = createPlotlyComponent(Plotly);
     var lineColor = 'green';
     const timePoints = this.getTimePoints(candles);
     const pricePoints = this.getPricePoints(candles);
-    const openPrice = this.getOpeningPeriodPrice(candles);
     const closePrice = candles[candles.length - 1].close;
     const closeTime = timePoints[timePoints.length - 1];
     const openTime = timePoints[0];
@@ -295,8 +294,7 @@ class HomePage extends React.Component {
         <AppBar/>
         {Object.keys(this.state.indexData).map((symbol) => {
           const indexObj = this.state.indexData[symbol];
-          console.log(indexObj)
-          return this.generateLineDiagram(JSON.parse(indexObj.today).candles, symbol)
+          return this.generateLineDiagram(JSON.parse(indexObj.today).candles, symbol, indexObj.start.close)
           })}
       </div>);
     }

@@ -176,16 +176,16 @@ app.get('/getLatestPrice', function(req, res, next) {
         }
       }
     }
-    var lastClose = getPreviousDayClose(marketOpen, query["symbol"]);
-    console.log(lastClose)
-    request({url:`https://api.tdameritrade.com/v1/marketdata/${query["symbol"]}/pricehistory`, qs:params}, function(err, response, body) {
-      if(err) { console.log(err); res.send(err); res.end(); next(); }
-      res.send({
-        start: lastClose,
-        today: body
+    getPreviousDayClose(marketOpen, query["symbol"]).then(function(lastClose){
+      request({url:`https://api.tdameritrade.com/v1/marketdata/${query["symbol"]}/pricehistory`, qs:params}, function(err, response, body) {
+        if(err) { console.log(err); res.send(err); res.end(); next(); }
+        res.send({
+          start: lastClose,
+          today: body
+        });
+        res.end();
+        next();
       });
-      res.end();
-      next();
-    });
+    })
   })
 })
